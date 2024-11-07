@@ -4,19 +4,24 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import store.domain.Product;
+import store.repository.ProductRepository;
 import store.view.InputView;
 
 public class InputValidator {
     private final InputView inputView;
+    private final ProductRepository productRepository;
 
     InputValidator(InputView inputView) {
         this.inputView = new InputView();
+        this.productRepository = ProductRepository.getInstance();
     }
 
     public List<Product> getBuyProducts(String input) {
         while (true) {
             try {
-                return makeProductsFromString(inputView.readBuyProduct());
+                List<Product> products = makeProductsFromString(inputView.readBuyProduct());
+                validProducts(products);
+                return products;
             } catch (IllegalArgumentException e) {
                 System.out.println(e);
             }
@@ -91,6 +96,13 @@ public class InputValidator {
         }
     }
 
+    private void validProducts(List<Product> products){
+        for(Product product : products){
+            productRepository.validateName(product);
+            productRepository.validQuantity(product);
+        }
+    }
+
     private List<Product> makeProductsFromString(String productValue) {
         try {
             return Arrays.stream(productValue.split(", "))
@@ -100,7 +112,7 @@ public class InputValidator {
                     })
                     .collect(Collectors.toList());
         } catch (Exception e) {
-            throw new IllegalArgumentException("[ERROR] 입력 형식을 다시 확인해 주세요.");
+            throw new IllegalArgumentException("[ERROR] 올바르지 않은 형식으로 입력했습니다. 다시 입력해 주세요.");
         }
     }
 }
