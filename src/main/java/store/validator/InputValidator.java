@@ -5,99 +5,62 @@ import java.util.List;
 import java.util.stream.Collectors;
 import store.domain.Product;
 import store.repository.ProductRepository;
-import store.view.InputView;
 
 public class InputValidator {
-    private final InputView inputView;
     private final ProductRepository productRepository;
 
-    InputValidator(InputView inputView) {
-        this.inputView = new InputView();
+    public InputValidator() {
         this.productRepository = ProductRepository.getInstance();
     }
 
     public List<Product> getBuyProducts(String input) {
-        while (true) {
-            try {
-                List<Product> products = makeProductsFromString(inputView.readBuyProduct());
-                validProducts(products);
-                return products;
-            } catch (IllegalArgumentException e) {
-                System.out.println(e);
-            }
-        }
+        List<Product> products = makeProductsFromString(input);
+        validProducts(products);
+        return products;
     }
 
-    public boolean isPlusedAdditionalQuantity(String productName, int additionalQuantity) {
-        while (true) {
-            try {
-                String input = inputView.readAdditionalQuantity(productName, additionalQuantity);
-                if (input.equals("Y")) {
-                    return true;
-                }
-                if (input.equals("N")) {
-                    return false;
-                }
-                throw new IllegalArgumentException("[ERROR] Y/N 로만 입력해 주세요.");
-            } catch (IllegalArgumentException e) {
-                System.out.println(e);
-            }
+    public boolean isPlusedAdditionalQuantity(String input) {
+        if (input.equals("Y")) {
+            return true;
         }
+        if (input.equals("N")) {
+            return false;
+        }
+        throw new IllegalArgumentException("[ERROR] Y/N 로만 입력해 주세요.");
     }
 
-    public boolean isPurchasedWithoutDiscount(String productName, int quantity) {
-        while (true) {
-            try {
-                String input = inputView.readPurchaseWithoutDiscount(productName, quantity);
-                if (input.equals("Y")) {
-                    return true;
-                }
-                if (input.equals("N")) {
-                    return false;
-                }
-                throw new IllegalArgumentException("[ERROR] Y/N 로만 입력해 주세요.");
-            } catch (IllegalArgumentException e) {
-                System.out.println(e);
-            }
+    public boolean isPurchasedWithoutDiscount(String input) {
+        if (input.equals("Y")) {
+            return true;
         }
+        if (input.equals("N")) {
+            return false;
+        }
+        throw new IllegalArgumentException("[ERROR] Y/N 로만 입력해 주세요.");
     }
 
-    public boolean isMembershipDiscountApplied() {
-        while (true) {
-            try {
-                String input = inputView.readMembershipDiscount();
-                if (input.equals("Y")) {
-                    return true;
-                }
-                if (input.equals("N")) {
-                    return false;
-                }
-                throw new IllegalArgumentException("[ERROR] Y/N 로만 입력해 주세요.");
-            } catch (IllegalArgumentException e) {
-                System.out.println(e);
-            }
+    public boolean isMembershipDiscountApplied(String input) {
+        if (input.equals("Y")) {
+            return true;
         }
+        if (input.equals("N")) {
+            return false;
+        }
+        throw new IllegalArgumentException("[ERROR] Y/N 로만 입력해 주세요.");
     }
 
-    public boolean isAdditionalPurchaseConfirmed() {
-        while (true) {
-            try {
-                String input = inputView.readAdditionalPurchase();
-                if (input.equals("Y")) {
-                    return true;
-                }
-                if (input.equals("N")) {
-                    return false;
-                }
-                throw new IllegalArgumentException("[ERROR] Y/N 로만 입력해 주세요.");
-            } catch (IllegalArgumentException e) {
-                System.out.println(e);
-            }
+    public boolean isAdditionalPurchaseConfirmed(String input) {
+        if (input.equals("Y")) {
+            return true;
         }
+        if (input.equals("N")) {
+            return false;
+        }
+        throw new IllegalArgumentException("[ERROR] Y/N 로만 입력해 주세요.");
     }
 
-    private void validProducts(List<Product> products){
-        for(Product product : products){
+    private void validProducts(List<Product> products) {
+        for (Product product : products) {
             productRepository.validateName(product);
             productRepository.validQuantity(product);
         }
