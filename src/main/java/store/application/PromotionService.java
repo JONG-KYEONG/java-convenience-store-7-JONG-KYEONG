@@ -22,7 +22,7 @@ public class PromotionService {
         for (Product product : products) {
             Optional<Product> promotionProduct = productRepository.findProductByNAmeWithPromotion(product.name());
             if (promotionProduct != null) {
-                if (isEligibleForAdditionalGift(product, promotionProduct.get())) {
+                if (isEligibleForAdditionalGift(product, promotionProduct.get()) && promotionProduct.get().quantity() >= product.quantity()) {
                     giftEligibleProducts.add(product);
                 }
             }
