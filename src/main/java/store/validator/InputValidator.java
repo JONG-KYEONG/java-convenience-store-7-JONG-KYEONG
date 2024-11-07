@@ -57,6 +57,23 @@ public class InputValidator {
         }
     }
 
+    public boolean isMembershipDiscountApplied() {
+        while (true) {
+            try {
+                String input = inputView.readMembershipDiscount();
+                if (input.equals("Y")) {
+                    return true;
+                }
+                if (input.equals("N")) {
+                    return false;
+                }
+                throw new IllegalArgumentException("[ERROR] Y/N 로만 입력해 주세요.");
+            } catch (IllegalArgumentException e) {
+                System.out.println(e);
+            }
+        }
+    }
+
     private List<Product> makeProductsFromString(String productValue) {
         try {
             return Arrays.stream(productValue.split(", "))
