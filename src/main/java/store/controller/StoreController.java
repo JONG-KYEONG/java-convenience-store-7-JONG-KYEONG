@@ -9,9 +9,11 @@ public class StoreController {
     public StoreController(){
         this.initailizer = new Initailizer();
         this.fileReader = new FileReader();
+        initRepository();
     }
 
-    public void init(){
+    private void initRepository(){
         initailizer.initProductRepository(fileReader.getProducts());
+        initailizer.initPromotionRepository(fileReader.getPromotions());
     }
 }
