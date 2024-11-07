@@ -25,8 +25,8 @@ public class InputView {
         }
     }
 
-    public boolean readAdditionalQuantity(String productName, int additionalQuantity) {
-        System.out.println("현재 " + productName + "은(는) " + additionalQuantity + "개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)");
+    public boolean readAdditionalQuantity(String productName) {
+        System.out.println("현재 " + productName + "은(는) 1개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)");
         while (true) {
             try {
                 return inputValidator.isPlusedAdditionalQuantity(readLine());

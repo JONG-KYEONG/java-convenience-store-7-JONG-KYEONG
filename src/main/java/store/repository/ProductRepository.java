@@ -1,6 +1,7 @@
 package store.repository;
 
 import java.util.List;
+import java.util.Optional;
 import store.domain.Product;
 
 public class ProductRepository {
@@ -41,6 +42,12 @@ public class ProductRepository {
         if (totalQuantity < product.quantity()) {
             throw new IllegalArgumentException("[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.");
         }
+    }
+
+    public Optional<Product> findProductByNAmeWithPromotion(String name){
+        return products.stream()
+                .filter(product -> product.name().equals(name) && product.promotion() != null)
+                .findFirst();
     }
 
 }
