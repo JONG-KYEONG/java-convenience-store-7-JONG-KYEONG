@@ -23,10 +23,27 @@ public class InputValidator {
         }
     }
 
-    public boolean plusAdditionalQuantity(String productName, int additionalQuantity) {
+    public boolean isPlusedAdditionalQuantity(String productName, int additionalQuantity) {
         while (true) {
             try {
                 String input = inputView.readAdditionalQuantity(productName, additionalQuantity);
+                if (input.equals("Y")) {
+                    return true;
+                }
+                if (input.equals("N")) {
+                    return false;
+                }
+                throw new IllegalArgumentException("[ERROR] Y/N 로만 입력해 주세요.");
+            } catch (IllegalArgumentException e) {
+                System.out.println(e);
+            }
+        }
+    }
+
+    public boolean isPurchasedWithoutDiscount(String productName, int quantity) {
+        while (true) {
+            try {
+                String input = inputView.readPurchaseWithoutDiscount(productName, quantity);
                 if (input.equals("Y")) {
                     return true;
                 }
