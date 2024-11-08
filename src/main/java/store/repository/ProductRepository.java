@@ -6,9 +6,9 @@ import store.domain.Product;
 
 public class ProductRepository {
     private static ProductRepository instance;
-    private final List<Product> products;
+    private List<Product> products;
 
-    private ProductRepository(List<Product> products){
+    private ProductRepository(List<Product> products) {
         this.products = products;
     }
 
@@ -26,14 +26,14 @@ public class ProductRepository {
         return products;
     }
 
-    public void validateName(Product product){
+    public void validateName(Product product) {
         products.stream()
                 .filter(products -> products.name().equals(product.name()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 상품입니다. 다시 입력해 주세요."));
     }
 
-    public void validQuantity(Product product){
+    public void validQuantity(Product product) {
         int totalQuantity = products.stream()
                 .filter(products -> products.name().equals(product.name()))
                 .mapToInt(Product::quantity)
@@ -44,10 +44,21 @@ public class ProductRepository {
         }
     }
 
-    public Optional<Product> findProductByNAmeWithPromotion(String name){
+    public Optional<Product> findProductByNameWithPromotion(String name) {
         return products.stream()
-                .filter(product -> product.name().equals(name) && product.promotion() != null)
+                .filter(product -> product.name().equals(name) && !product.promotion().equals("null"))
                 .findFirst();
+    }
+
+    public void decreaseQuantity(String productName, int amount, String promotion) {
+        if (amount == 0) {
+            return;
+        }
+        Product legacyProduct = products.stream()
+                .filter(product -> product.name().equals(productName) && product.promotion().equals(promotion))
+                .findFirst().get();
+        products.add(new Product(legacyProduct, legacyProduct.quantity() - amount));
+        products.remove(legacyProduct);
     }
 
 }
