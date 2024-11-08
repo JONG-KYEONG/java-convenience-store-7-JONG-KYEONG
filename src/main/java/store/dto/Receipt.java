@@ -29,11 +29,12 @@ public class Receipt {
         updatePromotionDiscount(product.price() * quantity);
     }
 
-    public void updateAdditionalPresentProduct(PresentProduct presentProduct) {
+    public void updateAdditionalPresentProduct(PresentProduct presentProduct, int amount) {
         presentProducts.stream()
                 .filter(product -> product.getName().equals(presentProduct.getName()))
                 .findFirst()
                 .ifPresent(product -> product.increaseQuantity());
+        updatePromotionDiscount(amount);
     }
 
     private void updatePromotionDiscount(int amount){

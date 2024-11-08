@@ -56,7 +56,7 @@ public class PromotionService {
                                              List<Product> promotionProducts) {  // 추가로 받을 프로모션 상품 영수증에 업데이트
         for (Product product : promotionProducts) {
             productRepository.decreaseQuantity(product.name(), 1, product.promotion());
-            receipt.updateAdditionalPresentProduct(new PresentProduct(product.name(), product.quantity()));
+            receipt.updateAdditionalPresentProduct(new PresentProduct(product.name(), product.quantity()), product.price());
         }
         return receipt;
     }
@@ -95,10 +95,8 @@ public class PromotionService {
         productRepository.decreaseQuantity(product.name(), product.quantity(), product.promotion());
         int promotionCount = product.quantity() / (promotion.buy() + promotion.get());
         int purchaseCount = product.quantity() % (promotion.buy() + promotion.get());
-        receipt.updatePurchaseProduct(
-                new PurchaseProduct(product.name(), promotionCount * promotion.buy() + purchaseCount,
-                        (purchaseCount + purchaseCount) * product.price()));
-        receipt.updatePresentProducts(new PresentProduct(product.name(), promotionCount * promotion.get()));
+        receipt.updatePurchaseProduct(product, promotionCount * promotion.buy() + purchaseCount, (purchaseCount + purchaseCount) * product.price());
+        receipt.updatePresentProducts(product, promotionCount * promotion.get());
         return receipt;
     }
 }
