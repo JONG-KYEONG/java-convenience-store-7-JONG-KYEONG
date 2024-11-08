@@ -31,21 +31,13 @@ public class PromotionService {
         return giftEligibleProducts;
     }
 
-    private void addIfGiftEligible(Product product, Product promotionProduct, List<Product> giftEligibleProducts) { // 리스트에 추가 제공 프로모션 상품 추가하는 메소드
-        if (isEligibleForAdditionalGift(product, promotionProduct)
-                && promotionProduct.quantity() >= product.quantity()) {
-            giftEligibleProducts.add(product);
+    public Receipt calculatePromotionPrice(Receipt receipt, List<Product> promotionProducts) { // 프로모션으로 구매하는 상품 영수증에 찍기
+        for (Product product : promotionProducts) {
+            Product promotionProduct = productRepository.findProductByNameWithPromotion(product.name()).get();
+            Promotion promotion = promotionRepository.findValidPromotionByName(promotionProduct.name()).get();
+            receipt = updateReceiptWithPromotion(receipt, product, promotion);
         }
-    }
-
-
-    private boolean isEligibleForAdditionalGift(Product product, Product promotionProduct) {  // 추가로 받을 수 있는 프로모션인지 확인하는 메소드
-        Promotion promotion = promotionRepository.findValidPromotionByName(promotionProduct.name()).get();
-        int quantityGap = product.quantity() % (promotion.get() + promotion.buy());
-        if (quantityGap <= promotion.get() && quantityGap != 0) {
-            return true;
-        }
-        return false;
+        return receipt;
     }
 
     public List<Product> getPromotionProduct(List<Product> products) {   // 프로모션 해당되는 상품만 리스트로 반환하기
@@ -60,13 +52,33 @@ public class PromotionService {
         return promotionProduct;
     }
 
-    public Receipt updateAdditionalPromotion(Receipt receipt, List<Product> promotionProducts){  // 추가로 받을 프로모션 상품 영수증에 업데이트
+    public Receipt updateAdditionalPromotion(Receipt receipt,
+                                             List<Product> promotionProducts) {  // 추가로 받을 프로모션 상품 영수증에 업데이트
         for (Product product : promotionProducts) {
             productRepository.decreaseQuantity(product.name(), 1, product.promotion());
             receipt.updateAdditionalPresentProduct(new PresentProduct(product.name(), product.quantity()));
         }
         return receipt;
     }
+
+    private void addIfGiftEligible(Product product, Product promotionProduct,
+                                   List<Product> giftEligibleProducts) { // 리스트에 추가 제공 프로모션 상품 추가하는 메소드
+        if (isEligibleForAdditionalGift(product, promotionProduct)
+                && promotionProduct.quantity() >= product.quantity()) {
+            giftEligibleProducts.add(product);
+        }
+    }
+
+    private boolean isEligibleForAdditionalGift(Product product,
+                                                Product promotionProduct) {  // 추가로 받을 수 있는 프로모션인지 확인하는 메소드
+        Promotion promotion = promotionRepository.findValidPromotionByName(promotionProduct.name()).get();
+        int quantityGap = product.quantity() % (promotion.get() + promotion.buy());
+        if (quantityGap <= promotion.get() && quantityGap != 0) {
+            return true;
+        }
+        return false;
+    }
+
 
     private Product applyPromotionIfEligible(Product product, Product stackProduct,
                                              Promotion promotion) { // 프로모션보다 많이 살려는 경우면 프로모션 범위 내에서만 확인
@@ -78,16 +90,8 @@ public class PromotionService {
         return product;
     }
 
-    public Receipt calculatePromotionPrice(Receipt receipt, List<Product> promotionProducts) { // 프로모션으로 구매하는 상품 영수증에 찍기
-        for (Product product : promotionProducts) {
-            Product promotionProduct = productRepository.findProductByNameWithPromotion(product.name()).get();
-            Promotion promotion = promotionRepository.findValidPromotionByName(promotionProduct.name()).get();
-            receipt = updateReceiptWithPromotion(receipt, product, promotion);
-        }
-        return receipt;
-    }
-
-    private Receipt updateReceiptWithPromotion(Receipt receipt, Product product, Promotion promotion) {  // 프로모션 상품 영수증 업데이트
+    private Receipt updateReceiptWithPromotion(Receipt receipt, Product product,
+                                               Promotion promotion) {  // 프로모션 상품 영수증 업데이트
         productRepository.decreaseQuantity(product.name(), product.quantity(), product.promotion());
         int promotionCount = product.quantity() / (promotion.buy() + promotion.get());
         int purchaseCount = product.quantity() % (promotion.buy() + promotion.get());
@@ -97,6 +101,4 @@ public class PromotionService {
         receipt.updatePresentProducts(new PresentProduct(product.name(), promotionCount * promotion.get()));
         return receipt;
     }
-
-
 }
