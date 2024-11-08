@@ -25,10 +25,8 @@ public class PromotionService {
     public List<Product> getGiftEligibleProducts(List<Product> products) {  // 프로모션 추가로 받을 수 있는 상품 리스트 가져오는 메소드
         List<Product> giftEligibleProducts = new ArrayList<>();
         for (Product product : products) {
-            Optional<Product> promotionProduct = productRepository.findProductByNameWithPromotion(product.name());
-            if (promotionProduct.isPresent()) {
-                addIfGiftEligible(product, promotionProduct.get(), giftEligibleProducts);
-            }
+            Product promotionProduct = productRepository.findProductByNameWithPromotion(product.name()).get();
+            addIfGiftEligible(product, promotionProduct, giftEligibleProducts);
         }
         return giftEligibleProducts;
     }

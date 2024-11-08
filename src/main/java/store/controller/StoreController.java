@@ -33,9 +33,10 @@ public class StoreController {
     }
 
     public void run(){
-        List<Product> purchaseProducts = inputView.readBuyProduct();
-        List<Product> promotionProduct = promotionService.getPromotionProduct(purchaseProducts);
-        List<Product> giftEligibleProducts = checkPromotion(purchaseProducts);
+        List<Product> inputProducts = inputView.readBuyProduct();
+        List<Product> promotionProduct = promotionService.getPromotionProduct(inputProducts);
+        List<Product> giftEligibleProducts = checkPromotion(promotionProduct);
+
     }
 
     public Receipt updateReceipt(List<Product> purchaseProducts,List<Product> promotionProduct ,List<Product> giftEligibleProducts){
@@ -45,8 +46,8 @@ public class StoreController {
         return receipt;
     }
 
-    public List<Product> checkPromotion(List<Product> products){
-        List<Product> giftEligibleProducts = promotionService.getGiftEligibleProducts(products);
+    public List<Product> checkPromotion(List<Product> promotionProduct){
+        List<Product> giftEligibleProducts = promotionService.getGiftEligibleProducts(promotionProduct);
         for (Product product : giftEligibleProducts){
             if(!inputView.readAdditionalQuantity(product.name())){
                 giftEligibleProducts.remove(product);
