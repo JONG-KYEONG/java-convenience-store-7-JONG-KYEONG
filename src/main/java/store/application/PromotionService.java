@@ -62,12 +62,20 @@ public class PromotionService {
         return promotionProduct;
     }
 
+    public Receipt updateAdditionalPromotion(Receipt receipt, List<Product> promotionProducts){  // 추가로 받을 프로모션 상품 영수증에 업데이트
+        for (Product product : promotionProducts) {
+            productRepository.decreaseQuantity(product.name(), 1, product.promotion());
+            receipt.updateAdditionalPresentProduct(new PresentProduct(product.name(), product.quantity()));
+        }
+        return receipt;
+    }
+
     private Product applyPromotionIfEligible(Product product, Product stackProduct,
                                              Promotion promotion) { // 프로모션보다 많이 살려는 경우면 프로모션 범위 내에서만 확인
         if (product.quantity() > stackProduct.quantity()) {
             int adjustedQuantity =
                     stackProduct.quantity() - (stackProduct.quantity() % (promotion.buy() + promotion.get()));
-            return new Product(product.name(), product.price(), adjustedQuantity, product.promotion());
+            return new Product(product, adjustedQuantity);
         }
         return product;
     }

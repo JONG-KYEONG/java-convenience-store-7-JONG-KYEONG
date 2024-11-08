@@ -3,8 +3,10 @@ package store.controller;
 import java.util.List;
 import store.application.FileReader;
 import store.application.Initailizer;
+import store.application.ProductService;
 import store.application.PromotionService;
 import store.domain.Product;
+import store.dto.Receipt;
 import store.view.InputView;
 import store.view.OutputView;
 
@@ -12,6 +14,7 @@ public class StoreController {
     private final Initailizer initailizer;
     private final FileReader fileReader;
     private final PromotionService promotionService;
+    private final ProductService productService;
     private final InputView inputView;
     private final OutputView outputView;
     public StoreController(){
@@ -19,6 +22,7 @@ public class StoreController {
         this.fileReader = new FileReader();
         initRepository();
         this.promotionService = new PromotionService();
+        this.productService = new ProductService();
         this.inputView = new InputView();
         this.outputView = new OutputView();
     }
@@ -30,7 +34,15 @@ public class StoreController {
 
     public void run(){
         List<Product> purchaseProducts = inputView.readBuyProduct();
+        List<Product> promotionProduct = promotionService.getPromotionProduct(purchaseProducts);
         List<Product> giftEligibleProducts = checkPromotion(purchaseProducts);
+    }
+
+    public Receipt updateReceipt(List<Product> purchaseProducts,List<Product> promotionProduct ,List<Product> giftEligibleProducts){
+        Receipt receipt = new Receipt();
+        receipt = promotionService.calculatePromotionPrice(receipt, promotionProduct);
+        receipt = promotionService.updateAdditionalPromotion(receipt, giftEligibleProducts);
+        return receipt;
     }
 
     public List<Product> checkPromotion(List<Product> products){
