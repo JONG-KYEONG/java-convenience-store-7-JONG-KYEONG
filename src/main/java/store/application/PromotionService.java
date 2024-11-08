@@ -22,11 +22,11 @@ public class PromotionService {
         this.promotionRepository = PromotionRepository.getInstance();
     }
 
-    public List<Product> getGiftEligibleProducts(List<Product> products) {  // 프로모션 추가로 받을 수 있는 상품 리스트 가져오는 메소드
+    public List<Product> getGiftEligibleProducts(List<Product> products) {  // 고객이 추가로 받을 수 있는 프로모션 상품 리스트 가져오는 메소드
         List<Product> giftEligibleProducts = new ArrayList<>();
         for (Product product : products) {
             Product promotionProduct = productRepository.findProductByNameWithPromotion(product.name()).get();
-            addIfGiftEligible(product, promotionProduct, giftEligibleProducts);
+            giftEligibleProducts = addIfGiftEligible(product, promotionProduct, giftEligibleProducts);
         }
         return giftEligibleProducts;
     }
@@ -34,7 +34,7 @@ public class PromotionService {
     public Receipt calculatePromotionPrice(Receipt receipt, List<Product> promotionProducts) { // 프로모션으로 구매하는 상품 영수증에 찍기
         for (Product product : promotionProducts) {
             Product promotionProduct = productRepository.findProductByNameWithPromotion(product.name()).get();
-            Promotion promotion = promotionRepository.findValidPromotionByName(promotionProduct.name()).get();
+            Promotion promotion = promotionRepository.findValidPromotionByName(promotionProduct.promotion()).get();
             receipt = updateReceiptWithPromotion(receipt, product, promotion);
         }
         return receipt;
@@ -43,8 +43,8 @@ public class PromotionService {
     public List<Product> getPromotionProduct(List<Product> products) {   // 프로모션 해당되는 상품만 리스트로 반환하기
         List<Product> promotionProduct = new ArrayList<>();
         for (Product product : products) {
-            Optional<Promotion> optionalPromotion = promotionRepository.findValidPromotionByName(product.name());
             Product stackProduct = productRepository.findProductByNameWithPromotion(product.name()).get();
+            Optional<Promotion> optionalPromotion = promotionRepository.findValidPromotionByName(stackProduct.promotion());
             if (optionalPromotion.isPresent()) {
                 promotionProduct.add(applyPromotionIfEligible(product, stackProduct, optionalPromotion.get()));
             }
@@ -55,25 +55,26 @@ public class PromotionService {
     public Receipt updateAdditionalPromotion(Receipt receipt,
                                              List<Product> promotionProducts) {  // 추가로 받을 프로모션 상품 영수증에 업데이트
         for (Product product : promotionProducts) {
-            productRepository.decreaseQuantity(product.name(), 1, product.promotion());
+            productRepository.decreasePromotionQuantity(product.name(), 1);
             receipt.updateAdditionalPresentProduct(new PresentProduct(product.name(), product.quantity()), product.price());
         }
         return receipt;
     }
 
-    private void addIfGiftEligible(Product product, Product promotionProduct,
-                                   List<Product> giftEligibleProducts) { // 리스트에 추가 제공 프로모션 상품 추가하는 메소드
+    private List<Product> addIfGiftEligible(Product product, Product promotionProduct,
+                                            List<Product> giftEligibleProducts) { // 리스트에 추가 제공 프로모션 상품 추가하는 메소드
         if (isEligibleForAdditionalGift(product, promotionProduct)
-                && promotionProduct.quantity() >= product.quantity()) {
+                && promotionProduct.quantity() > product.quantity()) {
             giftEligibleProducts.add(product);
         }
+        return giftEligibleProducts;
     }
 
     private boolean isEligibleForAdditionalGift(Product product,
                                                 Product promotionProduct) {  // 추가로 받을 수 있는 프로모션인지 확인하는 메소드
-        Promotion promotion = promotionRepository.findValidPromotionByName(promotionProduct.name()).get();
+        Promotion promotion = promotionRepository.findValidPromotionByName(promotionProduct.promotion()).get();
         int quantityGap = product.quantity() % (promotion.get() + promotion.buy());
-        if (quantityGap <= promotion.get() && quantityGap != 0) {
+        if (quantityGap == promotion.buy()) {
             return true;
         }
         return false;
@@ -92,7 +93,7 @@ public class PromotionService {
 
     private Receipt updateReceiptWithPromotion(Receipt receipt, Product product,
                                                Promotion promotion) {  // 프로모션 상품 영수증 업데이트
-        productRepository.decreaseQuantity(product.name(), product.quantity(), product.promotion());
+        productRepository.decreasePromotionQuantity(product.name(), product.quantity());
         int promotionCount = product.quantity() / (promotion.buy() + promotion.get());
         int purchaseCount = product.quantity() % (promotion.buy() + promotion.get());
         receipt.updatePurchaseProduct(product, promotionCount * promotion.buy() + purchaseCount, (purchaseCount + purchaseCount) * product.price());
