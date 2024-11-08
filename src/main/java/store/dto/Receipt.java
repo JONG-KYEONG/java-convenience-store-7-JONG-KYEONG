@@ -25,4 +25,11 @@ public class Receipt{
     public void updatePresentProducts(PresentProduct presentProduct){
         presentProducts.add(presentProduct);
     }
+
+    public void updateAdditionalPresentProduct(PresentProduct presentProduct){
+        presentProducts.stream()
+                .filter(product -> product.getName().equals(presentProduct.getName()))
+                .findFirst()
+                .ifPresent(product -> product.increaseQuantity());
+    }
 }
