@@ -72,7 +72,7 @@ public class PromotionService {
         return product;
     }
 
-    public Receipt calculatePromotionPrice(Receipt receipt, List<Product> promotionProducts) {
+    public Receipt calculatePromotionPrice(Receipt receipt, List<Product> promotionProducts) { // 프로모션으로 구매하는 상품 영수증에 찍기
         for (Product product : promotionProducts) {
             Product promotionProduct = productRepository.findProductByNameWithPromotion(product.name()).get();
             Promotion promotion = promotionRepository.findValidPromotionByName(promotionProduct.name()).get();
@@ -81,14 +81,7 @@ public class PromotionService {
         return receipt;
     }
 
-    private Receipt updateReceipt(Receipt receipt, Product product, int quantity) {
-        productRepository.decreaseQuantity(product.name(), quantity, "null");
-        receipt.updatePurchaseProduct(
-                new PurchaseProduct(product.name(), quantity, product.price() * quantity));
-        return receipt;
-    }
-
-    private Receipt updateReceiptWithPromotion(Receipt receipt, Product product, Promotion promotion) {
+    private Receipt updateReceiptWithPromotion(Receipt receipt, Product product, Promotion promotion) {  // 프로모션 상품 영수증 업데이트
         productRepository.decreaseQuantity(product.name(), product.quantity(), product.promotion());
         int promotionCount = product.quantity() / (promotion.buy() + promotion.get());
         int purchaseCount = product.quantity() % (promotion.buy() + promotion.get());
