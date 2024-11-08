@@ -1,5 +1,6 @@
 package store.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import store.application.FileReader;
 import store.application.Initailizer;
@@ -17,7 +18,8 @@ public class StoreController {
     private final ProductService productService;
     private final InputView inputView;
     private final OutputView outputView;
-    public StoreController(){
+
+    public StoreController() {
         this.initailizer = new Initailizer();
         this.fileReader = new FileReader();
         initRepository();
@@ -27,33 +29,57 @@ public class StoreController {
         this.outputView = new OutputView();
     }
 
-    private void initRepository(){
+    private void initRepository() {
         initailizer.initProductRepository(fileReader.getProducts());
         initailizer.initPromotionRepository(fileReader.getPromotions());
     }
 
-    public void run(){
+    public void run() {
         List<Product> inputProducts = inputView.readBuyProduct();
         List<Product> promotionProduct = promotionService.getPromotionProduct(inputProducts);
-        List<Product> giftEligibleProducts = checkPromotion(promotionProduct);
-
+        List<Product> giftEligibleProducts = checkAdditionalGiftEligibility(promotionProduct); // 추가 증정품 리스트
+        List<Product> purchaseProducts = productService.getPurchaseProduct(inputProducts,
+                promotionProduct); // 프로모션 없이 구매하는 상품 리스트
+        List<Product> purchaseWithPromotionProducts = checkAdditionalProductWithoutPromotion(inputProducts,
+                promotionProduct);  // 프로모션 재고 소진으로 프로모션 없이 구매하는 상품 리스트
+        Boolean hasMembership = inputView.readMembershipDiscount();
+        Receipt receipt = new Receipt();
+        receipt = updateReceiptWithPromotion(receipt, promotionProduct, giftEligibleProducts);
+        receipt = updateReceipt(receipt, hasMembership);
     }
 
-    public Receipt updateReceipt(List<Product> purchaseProducts,List<Product> promotionProduct ,List<Product> giftEligibleProducts){
-        Receipt receipt = new Receipt();
+    public Receipt updateReceipt(Receipt receipt, boolean hasMembership) { // 프로모션 상품들 구매, 영수증 갱신
+
+        return receipt;
+    }
+
+    public Receipt updateReceiptWithPromotion(Receipt receipt, List<Product> promotionProduct,
+                                              List<Product> giftEligibleProducts) { // 프로모션 상품들 구매, 영수증 갱신
         receipt = promotionService.calculatePromotionPrice(receipt, promotionProduct);
         receipt = promotionService.updateAdditionalPromotion(receipt, giftEligibleProducts);
         return receipt;
     }
 
-    public List<Product> checkPromotion(List<Product> promotionProduct){
+    public List<Product> checkAdditionalGiftEligibility(List<Product> promotionProduct) {  // 추가 증정품 받을 건지 확인하는 컨트롤러
         List<Product> giftEligibleProducts = promotionService.getGiftEligibleProducts(promotionProduct);
-        for (Product product : giftEligibleProducts){
-            if(!inputView.readAdditionalQuantity(product.name())){
-                giftEligibleProducts.remove(product);
+        List<Product> newGiftEligibleProducts = new ArrayList<>();
+        for (Product product : giftEligibleProducts) {
+            if (inputView.readAdditionalQuantity(product.name())) {
+                newGiftEligibleProducts.add(product);
             }
         }
-        return giftEligibleProducts;
+        return newGiftEligibleProducts;
     }
 
+    public List<Product> checkAdditionalProductWithoutPromotion(List<Product> inputProducts,
+                                                                List<Product> promotionProducts) {  // 프로모션 재고 없어서 없는 상품들 프로모션 없이 구매할 건지 확인하는 컴트롤러
+        List<Product> additionalProductsWithoutPromotion = productService.getPurchaseProductWithoutPromotion(
+                inputProducts, promotionProducts);
+        for (Product product : additionalProductsWithoutPromotion) {
+            if (!inputView.readPurchaseWithoutDiscount(product.name(), product.quantity())) {
+                additionalProductsWithoutPromotion.remove(product);
+            }
+        }
+        return additionalProductsWithoutPromotion;
+    }
 }

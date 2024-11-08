@@ -68,7 +68,7 @@ public class InputValidator {
 
     private List<Product> makeProductsFromString(String productValue) {
         try {
-            return Arrays.stream(productValue.split(", "))
+            return Arrays.stream(productValue.split(","))
                     .map(productString -> {
                         String[] parts = productString.replace("[", "").replace("]", "").split("-");
                         return new Product(parts[0], 0, Integer.parseInt(parts[1]), null);
