@@ -2,9 +2,10 @@ package store.dto;
 
 import java.util.ArrayList;
 import java.util.List;
+import store.constants.Constants;
 import store.domain.Product;
 
-public class Receipt{
+public class Receipt {
     private List<PurchaseProduct> purchaseProducts;
     private List<PresentProduct> presentProducts;
     private int totalCount;
@@ -13,23 +14,39 @@ public class Receipt{
     private int membershipDiscount;
     private int balanceAmount;
 
-    public Receipt(){
+    public Receipt() {
         purchaseProducts = new ArrayList<>();
         presentProducts = new ArrayList<>();
     }
 
-    public void updatePurchaseProduct(PurchaseProduct purchaseProduct){
-        purchaseProducts.add(purchaseProduct);
+    public void updatePurchaseProduct(Product product, int quantity, int amount) {
+        purchaseProducts.add(new PurchaseProduct(product.name(), quantity, amount));
+        updateTotalAmount(amount);
     }
 
-    public void updatePresentProducts(PresentProduct presentProduct){
-        presentProducts.add(presentProduct);
+    public void updatePresentProducts(Product product, int quantity) {
+        presentProducts.add(new PresentProduct(product.name(), quantity));
+        updatePromotionDiscount(product.price() * quantity);
     }
 
-    public void updateAdditionalPresentProduct(PresentProduct presentProduct){
+    public void updateAdditionalPresentProduct(PresentProduct presentProduct) {
         presentProducts.stream()
                 .filter(product -> product.getName().equals(presentProduct.getName()))
                 .findFirst()
                 .ifPresent(product -> product.increaseQuantity());
+    }
+
+    private void updatePromotionDiscount(int amount){
+        this.promotionDiscount += amount;
+    }
+
+    private void updateTotalAmount(int amount){
+        this.totalAmount += amount;
+    }
+
+    private void updateMembershipDiscount(int amount){
+        int additionalDiscount = (int) (amount * Constants.MEMBERSHIP_DISCOUNT_RATE);
+        int updatedDiscount = this.membershipDiscount + additionalDiscount;
+        this.membershipDiscount = Math.min(updatedDiscount, Constants.MAX_MEMBERSHIP_DISCOUNT_LIMIT);
     }
 }
