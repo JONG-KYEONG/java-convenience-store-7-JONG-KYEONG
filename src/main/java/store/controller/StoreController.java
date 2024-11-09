@@ -54,9 +54,11 @@ public class StoreController {
     }
 
     public void run(){
-        do {
+        runProcess();
+        while (inputView.readAdditionalPurchase()) {
+            outputView.printLn();
             runProcess();
-        } while (inputView.readAdditionalPurchase());
+        }
     }
 
     public Receipt updateReceipt(Receipt receipt, List<Product> purchaseProducts,boolean hasMembership) { // 일반 상품들 구매, 영수증 갱신
@@ -90,11 +92,12 @@ public class StoreController {
                                                                 List<Product> promotionProducts) {  // 프로모션 재고 없어서 없는 상품들 프로모션 없이 구매할 건지 확인하는 컴트롤러
         List<Product> additionalProductsWithoutPromotion = productService.getPurchaseProductWithoutPromotion(
                 inputProducts, promotionProducts);
+        List<Product> newAdditionalProductsWithoutPromotion = new ArrayList<>();
         for (Product product : additionalProductsWithoutPromotion) {
-            if (!inputView.readPurchaseWithoutDiscount(product.name(), product.quantity())) {
-                additionalProductsWithoutPromotion.remove(product);
+            if (inputView.readPurchaseWithoutDiscount(product.name(), product.quantity())) {
+                newAdditionalProductsWithoutPromotion.add(product);
             }
         }
-        return additionalProductsWithoutPromotion;
+        return newAdditionalProductsWithoutPromotion;
     }
 }
