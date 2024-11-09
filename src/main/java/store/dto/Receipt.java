@@ -73,6 +73,29 @@ public class Receipt {
     public StringBuilder toStringBuilder() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("\n");
+        getPurchaseProducts(stringBuilder);
+        getPresentProducts(stringBuilder);
+        getReceitResult(stringBuilder);
+        return stringBuilder;
+    }
+
+    private void getReceitResult(StringBuilder stringBuilder) {
+        stringBuilder.append("====================================\n");
+        stringBuilder.append("총구매액\t\t" + totalCount + "\t" + String.format("%,d", totalAmount) + "\n");
+        stringBuilder.append("행사할인\t\t\t-" + String.format("%,d", promotionDiscount) + "\n");
+        stringBuilder.append("멤버십할인\t\t\t-" + String.format("%,d", membershipDiscount) + "\n");
+        balanceAmount = totalAmount - promotionDiscount - membershipDiscount;
+        stringBuilder.append("내실돈\t\t\t " + String.format("%,d", balanceAmount) + "\n");
+    }
+
+    private void getPresentProducts(StringBuilder stringBuilder) {
+        stringBuilder.append("=============증\t정===============\n");
+        for (PresentProduct presentProduct : presentProducts) {
+            stringBuilder.append(presentProduct.getName() + "\t\t" + presentProduct.getQuantity() + "\n");
+        }
+    }
+
+    private void getPurchaseProducts(StringBuilder stringBuilder) {
         stringBuilder.append("==============W 편의점================\n");
         stringBuilder.append("상품명\t\t수량\t금액\n");
         for (PurchaseProduct purchaseProduct : purchaseProducts) {
@@ -80,16 +103,5 @@ public class Receipt {
             stringBuilder.append(purchaseProduct.getName() + "\t\t" + purchaseProduct.getQuantity() + " \t"
                     + String.format("%,d", purchaseProduct.getAmount()) + "\n");
         }
-        stringBuilder.append("=============증\t정===============\n");
-        for (PresentProduct presentProduct : presentProducts) {
-            stringBuilder.append(presentProduct.getName() + "\t\t" + presentProduct.getQuantity() + "\n");
-        }
-        stringBuilder.append("====================================\n");
-        stringBuilder.append("총구매액\t\t" + totalCount + "\t" + String.format("%,d", totalAmount) + "\n");
-        stringBuilder.append("행사할인\t\t\t-" + String.format("%,d", promotionDiscount) + "\n");
-        stringBuilder.append("멤버십할인\t\t\t-" + String.format("%,d", membershipDiscount) + "\n");
-        balanceAmount = totalAmount - promotionDiscount - membershipDiscount;
-        stringBuilder.append("내실돈\t\t\t " + String.format("%,d", balanceAmount) + "\n");
-        return stringBuilder;
     }
 }
