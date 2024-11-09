@@ -75,4 +75,14 @@ public class ProductRepository {
         products.remove(legacyProduct);
         return product;
     }
+
+    public int clearRemainingPromotionStock(String productName) {
+        Product legacyProduct = products.stream()
+                .filter(product -> product.name().equals(productName) && !product.promotion().equals("null"))
+                .findFirst().get();
+        Product product = new Product(legacyProduct, 0);
+        products.add(product);
+        products.remove(legacyProduct);
+        return legacyProduct.quantity();
+    }
 }

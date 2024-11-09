@@ -54,7 +54,8 @@ public class ProductService {
 
     public Receipt calculatePriceAdditionalProduct(Receipt receipt, List<Product> purchaseProducts, boolean hasMembership) { // 프로모션 재고 없어서 추가 구매 상품 영수증에 찍기
         for (Product product : purchaseProducts) {
-            Product purchaseProduct = productRepository.decreaseQuantity(product.name(), product.quantity());
+            int additionalQuantity = product.quantity() - productRepository.clearRemainingPromotionStock(product.name());
+            Product purchaseProduct = productRepository.decreaseQuantity(product.name(), additionalQuantity);
             receipt.updateAdditionalPurchaseProduct(purchaseProduct, product.quantity(), purchaseProduct.price() * product.quantity());
             if(hasMembership){
                 receipt.updateMembershipDiscount(purchaseProduct.price() * product.quantity());
