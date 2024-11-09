@@ -37,15 +37,26 @@ public class Receipt {
         updatePromotionDiscount(amount);
     }
 
-    private void updatePromotionDiscount(int amount){
+    public void updateAdditionalPurchaseProduct(Product purchaseProduct, int amount ,int quantity) {
+        purchaseProducts.stream()
+                .filter(product -> product.getName().equals(purchaseProduct.name()))
+                .findFirst()
+                .ifPresent(product -> {
+                    product.increaseQuantity(quantity);
+                    product.updateAmount(amount);
+                });
+        updateTotalAmount(amount);
+    }
+
+    private void updatePromotionDiscount(int amount) {
         this.promotionDiscount += amount;
     }
 
-    private void updateTotalAmount(int amount){
+    private void updateTotalAmount(int amount) {
         this.totalAmount += amount;
     }
 
-    private void updateMembershipDiscount(int amount){
+    public void updateMembershipDiscount(int amount) {
         int additionalDiscount = (int) (amount * Constants.MEMBERSHIP_DISCOUNT_RATE);
         int updatedDiscount = this.membershipDiscount + additionalDiscount;
         this.membershipDiscount = Math.min(updatedDiscount, Constants.MAX_MEMBERSHIP_DISCOUNT_LIMIT);
