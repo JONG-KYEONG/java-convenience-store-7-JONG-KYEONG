@@ -34,7 +34,7 @@ public class StoreController {
         initailizer.initPromotionRepository(fileReader.getPromotions());
     }
 
-    public void run() {
+    public void runProcess() {
         outputView.printWelcomeAndProductInfo();
         outputView.printProductInfo(productService.getStackProduct());
 
@@ -51,6 +51,12 @@ public class StoreController {
         receipt = updateReceipt(receipt,purchaseProducts ,hasMembership);
         receipt = updateReceiptAdditionalPurchase(receipt,purchaseWithPromotionProducts ,hasMembership);
         outputView.printReceipt(receipt.toStringBuilder());
+    }
+
+    public void run(){
+        do {
+            runProcess();
+        } while (inputView.readAdditionalPurchase());
     }
 
     public Receipt updateReceipt(Receipt receipt, List<Product> purchaseProducts,boolean hasMembership) { // 일반 상품들 구매, 영수증 갱신

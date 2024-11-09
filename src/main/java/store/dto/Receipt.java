@@ -34,10 +34,18 @@ public class Receipt {
                 .filter(product -> product.getName().equals(presentProduct.getName()))
                 .findFirst()
                 .ifPresent(product -> product.increaseQuantity());
+        purchaseProducts.stream()
+                .filter(product -> product.getName().equals(presentProduct.getName()))
+                .findFirst()
+                .ifPresent(product -> {
+                    product.increaseQuantity(1);
+                    product.updateAmount(amount);
+                });
         updatePromotionDiscount(amount);
+        updateTotalAmount(amount);
     }
 
-    public void updateAdditionalPurchaseProduct(Product purchaseProduct, int amount, int quantity) {
+    public void updateAdditionalPurchaseProduct(Product purchaseProduct, int quantity,  int amount) {
         purchaseProducts.stream()
                 .filter(product -> product.getName().equals(purchaseProduct.name()))
                 .findFirst()
