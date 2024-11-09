@@ -43,7 +43,7 @@ public class ProductService {
 
     public Receipt calculatePrice(Receipt receipt, List<Product> purchaseProducts, boolean hasMembership) { // 일반 구매 상품 영수증에 찍기
         for (Product product : purchaseProducts) {
-            Product purchaseProduct = productRepository.decreasePromotionQuantity(product.name(), product.quantity());
+            Product purchaseProduct = productRepository.decreaseQuantity(product.name(), product.quantity());
             receipt.updatePurchaseProduct(purchaseProduct, product.quantity(), purchaseProduct.price() * product.quantity());
             if(hasMembership){
                 receipt.updateMembershipDiscount(purchaseProduct.price() * product.quantity());
@@ -54,7 +54,7 @@ public class ProductService {
 
     public Receipt calculatePriceAdditionalProduct(Receipt receipt, List<Product> purchaseProducts, boolean hasMembership) { // 프로모션 재고 없어서 추가 구매 상품 영수증에 찍기
         for (Product product : purchaseProducts) {
-            Product purchaseProduct = productRepository.decreasePromotionQuantity(product.name(), product.quantity());
+            Product purchaseProduct = productRepository.decreaseQuantity(product.name(), product.quantity());
             receipt.updateAdditionalPurchaseProduct(purchaseProduct, product.quantity(), purchaseProduct.price() * product.quantity());
             if(hasMembership){
                 receipt.updateMembershipDiscount(purchaseProduct.price() * product.quantity());

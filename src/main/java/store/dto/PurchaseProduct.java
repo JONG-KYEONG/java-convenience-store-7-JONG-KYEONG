@@ -5,6 +5,10 @@ public class PurchaseProduct {
     private int quantity;
     private int amount;
 
+    public int getQuantity() {
+        return quantity;
+    }
+
     public PurchaseProduct(String name, int quantity, int amount) {
         this.name = name;
         this.quantity = quantity;

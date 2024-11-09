@@ -43,10 +43,13 @@ public class PromotionService {
     public List<Product> getPromotionProduct(List<Product> products) {   // 프로모션 해당되는 상품만 리스트로 반환하기
         List<Product> promotionProduct = new ArrayList<>();
         for (Product product : products) {
-            Product stackProduct = productRepository.findProductByNameWithPromotion(product.name()).get();
-            Optional<Promotion> optionalPromotion = promotionRepository.findValidPromotionByName(stackProduct.promotion());
+            Optional<Product> stackProduct = productRepository.findProductByNameWithPromotion(product.name());
+            if(stackProduct.isEmpty()){
+                continue;
+            }
+            Optional<Promotion> optionalPromotion = promotionRepository.findValidPromotionByName(stackProduct.get().promotion());
             if (optionalPromotion.isPresent()) {
-                promotionProduct.add(applyPromotionIfEligible(product, stackProduct, optionalPromotion.get()));
+                promotionProduct.add(applyPromotionIfEligible(product, stackProduct.get(), optionalPromotion.get()));
             }
         }
         return promotionProduct;
@@ -96,8 +99,8 @@ public class PromotionService {
         productRepository.decreasePromotionQuantity(product.name(), product.quantity());
         int promotionCount = product.quantity() / (promotion.buy() + promotion.get());
         int purchaseCount = product.quantity() % (promotion.buy() + promotion.get());
-        receipt.updatePurchaseProduct(product, promotionCount * promotion.buy() + purchaseCount, (purchaseCount + purchaseCount) * promotionProduct.price());
-        receipt.updatePresentProducts(product, promotionCount * promotion.get());
+        receipt.updatePurchaseProduct(promotionProduct, product.quantity(), product.quantity() * promotionProduct.price());
+        receipt.updatePresentProducts(promotionProduct, promotionCount * promotion.get());
         return receipt;
     }
 }

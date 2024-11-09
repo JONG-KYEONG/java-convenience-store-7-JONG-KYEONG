@@ -50,7 +50,7 @@ public class StoreController {
         receipt = updateReceiptWithPromotion(receipt, promotionProduct, giftEligibleProducts);
         receipt = updateReceipt(receipt,purchaseProducts ,hasMembership);
         receipt = updateReceiptAdditionalPurchase(receipt,purchaseWithPromotionProducts ,hasMembership);
-
+        outputView.printReceipt(receipt.toStringBuilder());
     }
 
     public Receipt updateReceipt(Receipt receipt, List<Product> purchaseProducts,boolean hasMembership) { // 일반 상품들 구매, 영수증 갱신

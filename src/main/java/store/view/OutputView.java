@@ -20,4 +20,8 @@ public class OutputView {
         }
         System.out.println(stringBuilder);
     }
+
+    public void printReceipt(StringBuilder stringBuilder){
+        System.out.println(stringBuilder);
+    }
 }
