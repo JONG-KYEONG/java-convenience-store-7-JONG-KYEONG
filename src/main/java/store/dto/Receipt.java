@@ -75,11 +75,11 @@ public class Receipt {
         stringBuilder.append("\n");
         getPurchaseProducts(stringBuilder);
         getPresentProducts(stringBuilder);
-        getReceitResult(stringBuilder);
+        getReceiptResult(stringBuilder);
         return stringBuilder;
     }
 
-    private void getReceitResult(StringBuilder stringBuilder) {
+    private void getReceiptResult(StringBuilder stringBuilder) {
         stringBuilder.append("====================================\n");
         stringBuilder.append("총구매액\t\t" + totalCount + "\t" + String.format("%,d", totalAmount) + "\n");
         stringBuilder.append("행사할인\t\t\t-" + String.format("%,d", promotionDiscount) + "\n");
