@@ -35,7 +35,7 @@ public class PromotionService {
         for (Product product : promotionProducts) {
             Product promotionProduct = productRepository.findProductByNameWithPromotion(product.name()).get();
             Promotion promotion = promotionRepository.findValidPromotionByName(promotionProduct.promotion()).get();
-            receipt = updateReceiptWithPromotion(receipt, product, promotion);
+            receipt = updateReceiptWithPromotion(receipt, product, promotion, promotionProduct);
         }
         return receipt;
     }
@@ -55,8 +55,8 @@ public class PromotionService {
     public Receipt updateAdditionalPromotion(Receipt receipt,
                                              List<Product> promotionProducts) {  // 추가로 받을 프로모션 상품 영수증에 업데이트
         for (Product product : promotionProducts) {
-            productRepository.decreasePromotionQuantity(product.name(), 1);
-            receipt.updateAdditionalPresentProduct(new PresentProduct(product.name(), product.quantity()), product.price());
+            Product presentProduct = productRepository.decreasePromotionQuantity(product.name(), 1);
+            receipt.updateAdditionalPresentProduct(new PresentProduct(product.name(), product.quantity()), presentProduct.price());
         }
         return receipt;
     }
@@ -92,11 +92,11 @@ public class PromotionService {
     }
 
     private Receipt updateReceiptWithPromotion(Receipt receipt, Product product,
-                                               Promotion promotion) {  // 프로모션 상품 영수증 업데이트
+                                               Promotion promotion, Product promotionProduct) {  // 프로모션 상품 영수증 업데이트
         productRepository.decreasePromotionQuantity(product.name(), product.quantity());
         int promotionCount = product.quantity() / (promotion.buy() + promotion.get());
         int purchaseCount = product.quantity() % (promotion.buy() + promotion.get());
-        receipt.updatePurchaseProduct(product, promotionCount * promotion.buy() + purchaseCount, (purchaseCount + purchaseCount) * product.price());
+        receipt.updatePurchaseProduct(product, promotionCount * promotion.buy() + purchaseCount, (purchaseCount + purchaseCount) * promotionProduct.price());
         receipt.updatePresentProducts(product, promotionCount * promotion.get());
         return receipt;
     }

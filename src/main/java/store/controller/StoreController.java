@@ -45,13 +45,19 @@ public class StoreController {
         Boolean hasMembership = inputView.readMembershipDiscount();
         Receipt receipt = new Receipt();
         receipt = updateReceiptWithPromotion(receipt, promotionProduct, giftEligibleProducts);
-        receipt = updateReceipt(receipt, hasMembership);
+        receipt = updateReceipt(receipt,purchaseProducts ,hasMembership);
+        receipt = updateReceiptAdditionalPurchase(receipt,purchaseWithPromotionProducts ,hasMembership);
+
     }
 
-    public Receipt updateReceipt(Receipt receipt, boolean hasMembership) { // 프로모션 상품들 구매, 영수증 갱신
-
-        return receipt;
+    public Receipt updateReceipt(Receipt receipt, List<Product> purchaseProducts,boolean hasMembership) { // 일반 상품들 구매, 영수증 갱신
+        return productService.calculatePrice(receipt, purchaseProducts, hasMembership);
     }
+
+    public Receipt updateReceiptAdditionalPurchase(Receipt receipt, List<Product> purchaseWithPromotionProducts,boolean hasMembership) { // 일반 상품들 구매, 영수증 갱신
+        return productService.calculatePriceAdditionalProduct(receipt, purchaseWithPromotionProducts, hasMembership);
+    }
+
 
     public Receipt updateReceiptWithPromotion(Receipt receipt, List<Product> promotionProduct,
                                               List<Product> giftEligibleProducts) { // 프로모션 상품들 구매, 영수증 갱신
