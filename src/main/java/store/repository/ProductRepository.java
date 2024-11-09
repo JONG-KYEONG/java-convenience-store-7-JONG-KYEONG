@@ -61,8 +61,9 @@ public class ProductRepository {
                 .filter(product -> product.name().equals(productName) && !product.promotion().equals("null"))
                 .findFirst().get();
         Product product = new Product(legacyProduct, legacyProduct.quantity() - amount);
-        products.add(product);
-        products.remove(legacyProduct);
+
+        products.set(products.indexOf(legacyProduct), product);
+
         return product;
     }
 
@@ -71,8 +72,9 @@ public class ProductRepository {
                 .filter(product -> product.name().equals(productName) && product.promotion().equals("null"))
                 .findFirst().get();
         Product product = new Product(legacyProduct, legacyProduct.quantity() - amount);
-        products.add(product);
-        products.remove(legacyProduct);
+
+        products.set(products.indexOf(legacyProduct), product);
+
         return product;
     }
 
@@ -81,8 +83,9 @@ public class ProductRepository {
                 .filter(product -> product.name().equals(productName) && !product.promotion().equals("null"))
                 .findFirst().get();
         Product product = new Product(legacyProduct, 0);
-        products.add(product);
-        products.remove(legacyProduct);
+
+        products.set(products.indexOf(legacyProduct), product);
+
         return legacyProduct.quantity();
     }
 }
