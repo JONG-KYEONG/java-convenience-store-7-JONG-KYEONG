@@ -50,25 +50,29 @@ public class ProductRepository {
                 .findFirst();
     }
 
-    public void decreasePromotionQuantity(String productName, int amount) {
-        if (amount == 0) {
-            return;
-        }
+    public Optional<Product> findProductByNameWithoutPromotion(String name) {
+        return products.stream()
+                .filter(product -> product.name().equals(name) && product.promotion().equals("null"))
+                .findFirst();
+    }
+
+    public Product decreasePromotionQuantity(String productName, int amount) {
         Product legacyProduct = products.stream()
                 .filter(product -> product.name().equals(productName) && !product.promotion().equals("null"))
                 .findFirst().get();
-        products.add(new Product(legacyProduct, legacyProduct.quantity() - amount));
+        Product product = new Product(legacyProduct, legacyProduct.quantity() - amount);
+        products.add(product);
         products.remove(legacyProduct);
+        return product;
     }
 
-    public void decreaseQuantity(String productName, int amount) {
-        if (amount == 0) {
-            return;
-        }
+    public Product decreaseQuantity(String productName, int amount) {
         Product legacyProduct = products.stream()
                 .filter(product -> product.name().equals(productName) && product.promotion().equals("null"))
                 .findFirst().get();
-        products.add(new Product(legacyProduct, legacyProduct.quantity() - amount));
+        Product product = new Product(legacyProduct, legacyProduct.quantity() - amount);
+        products.add(product);
         products.remove(legacyProduct);
+        return product;
     }
 }
