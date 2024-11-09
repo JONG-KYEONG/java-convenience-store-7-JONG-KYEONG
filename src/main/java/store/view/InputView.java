@@ -20,7 +20,7 @@ public class InputView {
                 List<Product> products = inputValidator.getBuyProducts(readLine());
                 return products;
             } catch (IllegalArgumentException e) {
-                System.out.println(e);
+                System.out.println(e.getMessage());
             }
         }
     }
@@ -32,7 +32,7 @@ public class InputView {
             try {
                 return inputValidator.isPlusedAdditionalQuantity(readLine());
             } catch (IllegalArgumentException e) {
-                System.out.println(e);
+                System.out.println(e.getMessage());
             }
         }
     }
@@ -45,7 +45,7 @@ public class InputView {
             try {
                 return inputValidator.isPurchasedWithoutDiscount(readLine());
             } catch (IllegalArgumentException e) {
-                System.out.println(e);
+                System.out.println(e.getMessage());
             }
         }
     }
@@ -58,7 +58,7 @@ public class InputView {
             try {
                 return inputValidator.isMembershipDiscountApplied(readLine());
             } catch (IllegalArgumentException e) {
-                System.out.println(e);
+                System.out.println(e.getMessage());
             }
         }
     }
@@ -70,7 +70,7 @@ public class InputView {
             try {
                 return inputValidator.isAdditionalPurchaseConfirmed(readLine());
             } catch (IllegalArgumentException e) {
-                System.out.println(e);
+                System.out.println(e.getMessage());
             }
         }
     }
