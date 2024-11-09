@@ -35,25 +35,6 @@ public class StoreController {
         initailizer.initPromotionRepository(fileReader.getPromotions());
     }
 
-//    public void runProcess() {
-//        outputView.printWelcomeAndProductInfo();
-//        outputView.printProductInfo(productService.getStackProduct());
-//
-//        List<Product> inputProducts = inputView.readBuyProduct();
-//        List<Product> promotionProduct = promotionService.getPromotionProduct(inputProducts);
-//        List<Product> giftEligibleProducts = checkAdditionalGiftEligibility(promotionProduct); // 추가 증정품 리스트
-//        List<Product> purchaseProducts = productService.getPurchaseProduct(inputProducts,
-//                promotionProduct); // 프로모션 없이 구매하는 상품 리스트
-//        List<Product> purchaseWithPromotionProducts = checkAdditionalProductWithoutPromotion(inputProducts,
-//                promotionProduct);  // 프로모션 재고 소진으로 프로모션 없이 구매하는 상품 리스트
-//        Boolean hasMembership = inputView.readMembershipDiscount();
-//        Receipt receipt = new Receipt();
-//        receipt = updateReceiptWithPromotion(receipt, promotionProduct, giftEligibleProducts);
-//        receipt = updateReceipt(receipt,purchaseProducts ,hasMembership);
-//        receipt = updateReceiptAdditionalPurchase(receipt,purchaseWithPromotionProducts ,hasMembership);
-//        outputView.printReceipt(receipt.toStringBuilder());
-//    }
-
     public void runProcess() {
         outputView.printWelcomeAndProductInfo();
         outputView.printProductInfo(productService.getStackProduct());

@@ -23,7 +23,7 @@ public class PurchaseProduct {
         return amount;
     }
 
-    public void updateAmount(int amount){
+    public void updateAmount(int amount) {
         this.amount += amount;
     }
 

@@ -16,7 +16,7 @@ public class ProductService {
         this.productRepository = ProductRepository.getInstance();
     }
 
-    public List<Product> getStackProduct(){
+    public List<Product> getStackProduct() {
         return productRepository.getProducts();
     }
 
@@ -41,23 +41,27 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public Receipt calculatePrice(Receipt receipt, List<Product> purchaseProducts, boolean hasMembership) { // 일반 구매 상품 영수증에 찍기
+    public Receipt calculatePrice(Receipt receipt, List<Product> purchaseProducts,
+                                  boolean hasMembership) { // 일반 구매 상품 영수증에 찍기
         for (Product product : purchaseProducts) {
             Product purchaseProduct = productRepository.decreaseQuantity(product.name(), product.quantity());
-            receipt.updatePurchaseProduct(purchaseProduct, product.quantity(), purchaseProduct.price() * product.quantity());
-            if(hasMembership){
+            receipt.updatePurchaseProduct(purchaseProduct, product.quantity(),
+                    purchaseProduct.price() * product.quantity());
+            if (hasMembership) {
                 receipt.updateMembershipDiscount(purchaseProduct.price() * product.quantity());
             }
         }
         return receipt;
     }
 
-    public Receipt calculatePriceAdditionalProduct(Receipt receipt, List<Product> purchaseProducts, boolean hasMembership) { // 프로모션 재고 없어서 추가 구매 상품 영수증에 찍기
+    public Receipt calculatePriceAdditionalProduct(Receipt receipt, List<Product> purchaseProducts,
+                                                   boolean hasMembership) { // 프로모션 재고 없어서 추가 구매 상품 영수증에 찍기
         for (Product product : purchaseProducts) {
             int additionalQuantity = product.quantity() - productRepository.clearRemainingPromotionStock(product.name());
             Product purchaseProduct = productRepository.decreaseQuantity(product.name(), additionalQuantity);
-            receipt.updateAdditionalPurchaseProduct(purchaseProduct, product.quantity(), purchaseProduct.price() * product.quantity());
-            if(hasMembership){
+            receipt.updateAdditionalPurchaseProduct(purchaseProduct, product.quantity(),
+                    purchaseProduct.price() * product.quantity());
+            if (hasMembership) {
                 receipt.updateMembershipDiscount(purchaseProduct.price() * product.quantity());
             }
         }

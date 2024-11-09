@@ -7,11 +7,11 @@ import store.repository.ProductRepository;
 import store.repository.PromotionRepository;
 
 public class Initailizer {
-    public void initProductRepository(List<Product> products){
+    public void initProductRepository(List<Product> products) {
         ProductRepository.init(products);
     }
 
-    public void initPromotionRepository(List<Promotion> promotions){
+    public void initPromotionRepository(List<Promotion> promotions) {
         PromotionRepository.init(promotions);
     }
 }
