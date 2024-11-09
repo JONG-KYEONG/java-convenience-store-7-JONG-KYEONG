@@ -16,6 +16,10 @@ public class ProductService {
         this.productRepository = ProductRepository.getInstance();
     }
 
+    public List<Product> getStackProduct(){
+        return productRepository.getProducts();
+    }
+
     public List<Product> getPurchaseProduct(List<Product> inputProducts,
                                             List<Product> promotionProducts) { // 프로모션 없는 상품.
         List<Product> purchaseProducts = inputProducts.stream()

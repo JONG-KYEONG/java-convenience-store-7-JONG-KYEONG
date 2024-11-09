@@ -35,6 +35,9 @@ public class StoreController {
     }
 
     public void run() {
+        outputView.printWelcomeAndProductInfo();
+        outputView.printProductInfo(productService.getStackProduct());
+
         List<Product> inputProducts = inputView.readBuyProduct();
         List<Product> promotionProduct = promotionService.getPromotionProduct(inputProducts);
         List<Product> giftEligibleProducts = checkAdditionalGiftEligibility(promotionProduct); // 추가 증정품 리스트
