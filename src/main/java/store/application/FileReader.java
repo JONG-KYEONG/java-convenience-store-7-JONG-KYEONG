@@ -10,15 +10,11 @@ import store.domain.Product;
 import store.domain.Promotion;
 
 public class FileReader {
-
     public List<Product> getProducts() {
         List<String> inputProducts = readProductsFile();
         List<Product> products = new ArrayList<>();
-        for (String product : inputProducts) {
-            String[] productValue = product.split(",");
-            if (productValue[0].equals("name")) {
-                continue;
-            }
+        for (int i = 1; i < inputProducts.size(); i++) {
+            String[] productValue = inputProducts.get(i).split(",");
             products.add(
                     new Product(productValue[0], Integer.parseInt(productValue[1]), Integer.parseInt(productValue[2]),
                             productValue[3]));
@@ -42,11 +38,8 @@ public class FileReader {
     public List<Promotion> getPromotions() {
         List<String> inputPromotions = readPromotionsFile();
         List<Promotion> promotions = new ArrayList<>();
-        for (String promotion : inputPromotions) {
-            String[] promotionValue = promotion.split(",");
-            if (promotionValue[0].equals("name")) {
-                continue;
-            }
+        for (int i = 1; i < inputPromotions.size(); i++) {
+            String[] promotionValue = inputPromotions.get(i).split(",");
             promotions.add(new Promotion(promotionValue[0], Integer.parseInt(promotionValue[1]),
                     Integer.parseInt(promotionValue[2]),
                     LocalDate.parse(promotionValue[3]), LocalDate.parse(promotionValue[4])));

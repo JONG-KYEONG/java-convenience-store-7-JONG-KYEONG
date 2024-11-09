@@ -29,20 +29,13 @@ public class Receipt {
         updatePromotionDiscount(product.price() * quantity);
     }
 
-    public void updateAdditionalPresentProduct(PresentProduct presentProduct, int amount) {
+    public void updateAdditionalPresentProduct(Product presentProduct, int amount) {
         presentProducts.stream()
-                .filter(product -> product.getName().equals(presentProduct.getName()))
+                .filter(product -> product.getName().equals(presentProduct.name()))
                 .findFirst()
                 .ifPresent(product -> product.increaseQuantity());
-        purchaseProducts.stream()
-                .filter(product -> product.getName().equals(presentProduct.getName()))
-                .findFirst()
-                .ifPresent(product -> {
-                    product.increaseQuantity(1);
-                    product.updateAmount(amount);
-                });
+        updateAdditionalPurchaseProduct(presentProduct, 1, amount);
         updatePromotionDiscount(amount);
-        updateTotalAmount(amount);
     }
 
     public void updateAdditionalPurchaseProduct(Product purchaseProduct, int quantity,  int amount) {

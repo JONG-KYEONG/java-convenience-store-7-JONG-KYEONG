@@ -14,19 +14,34 @@ public class OutputView {
     public void printProductInfo(List<Product> stackProducts) {
         StringBuilder stringBuilder = new StringBuilder();
         for (Product product : stackProducts) {
-            String price = String.format("%,d", product.price()) + "원 ";
-            String quantity = product.quantity() + "개 ";
-            String promotion = product.promotion();
-            if (product.quantity() == 0) {
-                quantity = "재고 없음 ";
-            }
-            if(promotion.equals("null")){
-                promotion = "";
-            }
+            String price = getPrice(product);
+            String quantity = getQuantity(product);
+            String promotion = getPromotion(product);
 
             stringBuilder.append("- " + product.name() + " " + price + quantity + promotion + "\n");
         }
         System.out.println(stringBuilder);
+    }
+
+    private static String getPrice(Product product) {
+        String price = String.format("%,d", product.price()) + "원 ";
+        return price;
+    }
+
+    private static String getPromotion(Product product) {
+        String promotion = product.promotion();
+        if(promotion.equals("null")){
+            promotion = "";
+        }
+        return promotion;
+    }
+
+    private static String getQuantity(Product product) {
+        String quantity = product.quantity() + "개 ";
+        if (product.quantity() == 0) {
+            quantity = "재고 없음 ";
+        }
+        return quantity;
     }
 
     public void printReceipt(StringBuilder stringBuilder){

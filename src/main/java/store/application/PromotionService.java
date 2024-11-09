@@ -44,22 +44,26 @@ public class PromotionService {
         List<Product> promotionProduct = new ArrayList<>();
         for (Product product : products) {
             Optional<Product> stackProduct = productRepository.findProductByNameWithPromotion(product.name());
-            if(stackProduct.isEmpty()){
-                continue;
-            }
-            Optional<Promotion> optionalPromotion = promotionRepository.findValidPromotionByName(stackProduct.get().promotion());
-            if (optionalPromotion.isPresent()) {
-                promotionProduct.add(applyPromotionIfEligible(product, stackProduct.get(), optionalPromotion.get()));
+            if (stackProduct.isPresent()) {
+                addPromotionProduct(product, stackProduct.get(), promotionProduct);
             }
         }
         return promotionProduct;
+    }
+
+    private void addPromotionProduct(Product product, Product stackProduct, List<Product> promotionProduct) {
+        Optional<Promotion> optionalPromotion = promotionRepository.findValidPromotionByName(
+                stackProduct.promotion());
+        if (optionalPromotion.isPresent()) {
+            promotionProduct.add(applyPromotionIfEligible(product, stackProduct, optionalPromotion.get()));
+        }
     }
 
     public Receipt updateAdditionalPromotion(Receipt receipt,
                                              List<Product> promotionProducts) {  // 추가로 받을 프로모션 상품 영수증에 업데이트
         for (Product product : promotionProducts) {
             Product presentProduct = productRepository.decreasePromotionQuantity(product.name(), 1);
-            receipt.updateAdditionalPresentProduct(new PresentProduct(product.name(), product.quantity()), presentProduct.price());
+            receipt.updateAdditionalPresentProduct(presentProduct, presentProduct.price());
         }
         return receipt;
     }
@@ -99,7 +103,8 @@ public class PromotionService {
         productRepository.decreasePromotionQuantity(product.name(), product.quantity());
         int promotionCount = product.quantity() / (promotion.buy() + promotion.get());
         int purchaseCount = product.quantity() % (promotion.buy() + promotion.get());
-        receipt.updatePurchaseProduct(promotionProduct, product.quantity(), product.quantity() * promotionProduct.price());
+        receipt.updatePurchaseProduct(promotionProduct, product.quantity(),
+                product.quantity() * promotionProduct.price());
         receipt.updatePresentProducts(promotionProduct, promotionCount * promotion.get());
         return receipt;
     }
