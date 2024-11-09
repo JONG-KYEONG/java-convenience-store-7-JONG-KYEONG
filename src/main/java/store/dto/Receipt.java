@@ -38,7 +38,7 @@ public class Receipt {
         updatePromotionDiscount(amount);
     }
 
-    public void updateAdditionalPurchaseProduct(Product purchaseProduct, int quantity,  int amount) {
+    public void updateAdditionalPurchaseProduct(Product purchaseProduct, int quantity, int amount) {
         purchaseProducts.stream()
                 .filter(product -> product.getName().equals(purchaseProduct.name()))
                 .findFirst()
@@ -73,28 +73,29 @@ public class Receipt {
     }
 
     private void getReceiptResult(StringBuilder stringBuilder) {
-        stringBuilder.append("====================================\n");
-        stringBuilder.append("총구매액\t\t" + totalCount + "\t" + String.format("%,d", totalAmount) + "\n");
-        stringBuilder.append("행사할인\t\t\t-" + String.format("%,d", promotionDiscount) + "\n");
-        stringBuilder.append("멤버십할인\t\t\t-" + String.format("%,d", membershipDiscount) + "\n");
         balanceAmount = totalAmount - promotionDiscount - membershipDiscount;
-        stringBuilder.append("내실돈\t\t\t " + String.format("%,d", balanceAmount) + "\n");
+        stringBuilder.append("====================================\n");
+        stringBuilder.append(String.format("%-17s %-3d %,10d\n", "총구매액", totalCount, totalAmount));
+        stringBuilder.append(String.format("%-17s %8s %,d\n", "행사할인", "-", promotionDiscount));
+        stringBuilder.append(String.format("%-17s %8s %,d\n", "멤버십할인", "-", membershipDiscount));
+        stringBuilder.append(String.format("%-17s %8s %,d\n", "내실돈", "-",balanceAmount));
     }
 
     private void getPresentProducts(StringBuilder stringBuilder) {
-        stringBuilder.append("=============증\t정===============\n");
+        stringBuilder.append("=============증    정===============\n");
         for (PresentProduct presentProduct : presentProducts) {
-            stringBuilder.append(presentProduct.getName() + "\t\t" + presentProduct.getQuantity() + "\n");
+            stringBuilder.append(String.format("%-19s %-3d\n", presentProduct.getName(), presentProduct.getQuantity()));
         }
     }
 
     private void getPurchaseProducts(StringBuilder stringBuilder) {
         stringBuilder.append("==============W 편의점================\n");
-        stringBuilder.append("상품명\t\t수량\t금액\n");
+        stringBuilder.append(String.format("%-17s %-3s %10s\n", "상품명", "수량", "금액"));
         for (PurchaseProduct purchaseProduct : purchaseProducts) {
             totalCount += purchaseProduct.getQuantity();
-            stringBuilder.append(purchaseProduct.getName() + "\t\t" + purchaseProduct.getQuantity() + " \t"
-                    + String.format("%,d", purchaseProduct.getAmount()) + "\n");
+            stringBuilder.append(
+                    String.format("%-19s %-3d %,10d\n", purchaseProduct.getName(), purchaseProduct.getQuantity(),
+                            purchaseProduct.getAmount()));
         }
     }
 }
