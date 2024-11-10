@@ -30,7 +30,7 @@ public class StoreController {
         this.outputView = new OutputView();
     }
 
-    private void initRepository() {
+    public void initRepository() {
         initailizer.initProductRepository(fileReader.getProducts());
         initailizer.initPromotionRepository(fileReader.getPromotions());
     }
@@ -46,28 +46,6 @@ public class StoreController {
         Receipt receipt = createReceiptWithPromotionAndPurchase(productProcessingResults, hasMembership);
 
         outputView.printReceipt(receipt.toStringBuilder());
-    }
-
-    private ProductProcessingResults processProducts(List<Product> inputProducts) {  // 로직에 필요한 리스트 생성
-        List<Product> promotionProduct = promotionService.getPromotionProduct(inputProducts);
-        List<Product> giftEligibleProducts = checkAdditionalGiftEligibility(promotionProduct);
-        List<Product> purchaseProducts = productService.getPurchaseProduct(inputProducts, promotionProduct);
-        List<Product> purchaseWithPromotionProducts = checkAdditionalProductWithoutPromotion(inputProducts,
-                promotionProduct);
-
-        return new ProductProcessingResults(promotionProduct, giftEligibleProducts, purchaseProducts,
-                purchaseWithPromotionProducts);
-    }
-
-    private Receipt createReceiptWithPromotionAndPurchase(ProductProcessingResults productProcessingResults,
-                                                          boolean hasMembership) {  // 영수증 업데이트
-        Receipt receipt = new Receipt();
-        receipt = updateReceiptWithPromotion(receipt, productProcessingResults.getPromotionProduct(),
-                productProcessingResults.getGiftEligibleProducts());
-        receipt = updateReceipt(receipt, productProcessingResults.getPurchaseProducts(), hasMembership);
-        receipt = updateReceiptAdditionalPurchase(receipt, productProcessingResults.getPurchaseWithPromotionProducts(),
-                hasMembership);
-        return receipt;
     }
 
     public void run() {
@@ -87,7 +65,6 @@ public class StoreController {
                                                    boolean hasMembership) { // 일반 상품들 구매, 영수증 갱신
         return productService.calculatePriceAdditionalProduct(receipt, purchaseWithPromotionProducts, hasMembership);
     }
-
 
     public Receipt updateReceiptWithPromotion(Receipt receipt, List<Product> promotionProduct,
                                               List<Product> giftEligibleProducts) { // 프로모션 상품들 구매, 영수증 갱신
@@ -118,5 +95,27 @@ public class StoreController {
             }
         }
         return newAdditionalProductsWithoutPromotion;
+    }
+
+    private ProductProcessingResults processProducts(List<Product> inputProducts) {  // 로직에 필요한 리스트 생성
+        List<Product> promotionProduct = promotionService.getPromotionProduct(inputProducts);
+        List<Product> giftEligibleProducts = checkAdditionalGiftEligibility(promotionProduct);
+        List<Product> purchaseProducts = productService.getPurchaseProduct(inputProducts, promotionProduct);
+        List<Product> purchaseWithPromotionProducts = checkAdditionalProductWithoutPromotion(inputProducts,
+                promotionProduct);
+
+        return new ProductProcessingResults(promotionProduct, giftEligibleProducts, purchaseProducts,
+                purchaseWithPromotionProducts);
+    }
+
+    private Receipt createReceiptWithPromotionAndPurchase(ProductProcessingResults productProcessingResults,
+                                                          boolean hasMembership) {  // 영수증 업데이트
+        Receipt receipt = new Receipt();
+        receipt = updateReceiptWithPromotion(receipt, productProcessingResults.getPromotionProduct(),
+                productProcessingResults.getGiftEligibleProducts());
+        receipt = updateReceipt(receipt, productProcessingResults.getPurchaseProducts(), hasMembership);
+        receipt = updateReceiptAdditionalPurchase(receipt, productProcessingResults.getPurchaseWithPromotionProducts(),
+                hasMembership);
+        return receipt;
     }
 }

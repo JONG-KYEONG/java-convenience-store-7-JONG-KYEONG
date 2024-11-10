@@ -47,14 +47,6 @@ public class PromotionService {
         return promotionProduct;
     }
 
-    private void addPromotionProduct(Product product, Product stackProduct, List<Product> promotionProduct) {
-        Optional<Promotion> optionalPromotion = promotionRepository.findValidPromotionByName(
-                stackProduct.promotion());
-        if (optionalPromotion.isPresent()) {
-            promotionProduct.add(applyPromotionIfEligible(product, stackProduct, optionalPromotion.get()));
-        }
-    }
-
     public Receipt updateAdditionalPromotion(Receipt receipt,
                                              List<Product> promotionProducts) {  // 추가로 받을 프로모션 상품 영수증에 업데이트
         for (Product product : promotionProducts) {
@@ -62,6 +54,14 @@ public class PromotionService {
             receipt.updateAdditionalPresentProduct(presentProduct, presentProduct.price());
         }
         return receipt;
+    }
+
+    private void addPromotionProduct(Product product, Product stackProduct, List<Product> promotionProduct) {
+        Optional<Promotion> optionalPromotion = promotionRepository.findValidPromotionByName(
+                stackProduct.promotion());
+        if (optionalPromotion.isPresent()) {
+            promotionProduct.add(applyPromotionIfEligible(product, stackProduct, optionalPromotion.get()));
+        }
     }
 
     private List<Product> addIfGiftEligible(Product product, Product promotionProduct,

@@ -49,14 +49,6 @@ public class Receipt {
         updateTotalAmount(amount);
     }
 
-    private void updatePromotionDiscount(int amount) {
-        this.promotionDiscount += amount;
-    }
-
-    private void updateTotalAmount(int amount) {
-        this.totalAmount += amount;
-    }
-
     public void updateMembershipDiscount(int amount) {
         int additionalDiscount = (int) (amount * Constants.MEMBERSHIP_DISCOUNT_RATE);
         int updatedDiscount = this.membershipDiscount + additionalDiscount;
@@ -70,6 +62,14 @@ public class Receipt {
         getPresentProducts(stringBuilder);
         getReceiptResult(stringBuilder);
         return stringBuilder;
+    }
+
+    private void updatePromotionDiscount(int amount) {
+        this.promotionDiscount += amount;
+    }
+
+    private void updateTotalAmount(int amount) {
+        this.totalAmount += amount;
     }
 
     private void getReceiptResult(StringBuilder stringBuilder) {

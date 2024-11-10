@@ -25,10 +25,6 @@ public class PromotionRepository {
         }
     }
 
-    public List<Promotion> getPromotions() {
-        return promotions;
-    }
-
     public Optional<Promotion> findValidPromotionByName(String name) {
         return promotions.stream()
                 .filter(promotion -> promotion.name().equals(name) && validPromotion(promotion))

@@ -24,6 +24,10 @@ public class OutputView {
         System.out.println(stringBuilder);
     }
 
+    public void printReceipt(StringBuilder stringBuilder) {
+        System.out.println(stringBuilder);
+    }
+
     private static String getPrice(Product product) {
         String price = String.format("%,d", product.price()) + "원 ";
         return price;
@@ -43,9 +47,5 @@ public class OutputView {
             quantity = "재고 없음 ";
         }
         return quantity;
-    }
-
-    public void printReceipt(StringBuilder stringBuilder) {
-        System.out.println(stringBuilder);
     }
 }
