@@ -78,7 +78,7 @@ public class Receipt {
         stringBuilder.append(String.format("%-17s %-3d %,10d\n", "총구매액", totalCount, totalAmount));
         stringBuilder.append(String.format("%-17s %8s %,d\n", "행사할인", "-", promotionDiscount));
         stringBuilder.append(String.format("%-17s %8s %,d\n", "멤버십할인", "-", membershipDiscount));
-        stringBuilder.append(String.format("%-17s %8s %,d\n", "내실돈", "-", balanceAmount));
+        stringBuilder.append(String.format("%-17s %8s %,d\n", "내실돈", "", balanceAmount));
     }
 
     private void getPresentProducts(StringBuilder stringBuilder) {
