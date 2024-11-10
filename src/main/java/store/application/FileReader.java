@@ -18,8 +18,29 @@ public class FileReader {
             products.add(
                     new Product(productValue[0], Integer.parseInt(productValue[1]), Integer.parseInt(productValue[2]),
                             productValue[3]));
+            ensureRegularStockExists(productValue, inputProducts, i, products);
         }
         return products;
+    }
+
+    private void ensureRegularStockExists(String[] productValue, List<String> inputProducts, int i, List<Product> products) {
+        if (productValue[3] != null) {
+            if(inputProducts.size()-1 == i){
+                addProductWithoutPromotion(inputProducts, i, products);
+                return;
+            }
+            if(!inputProducts.get(i + 1).split(",")[0].equals(productValue[0])){
+                addProductWithoutPromotion(inputProducts, i, products);
+            }
+        }
+    }
+
+    private void addProductWithoutPromotion(List<String> inputProducts, int i, List<Product> products) {
+        String[] productWithoutPromotionValue = inputProducts.get(i).split(",");
+        products.add(
+                new Product(productWithoutPromotionValue[0], Integer.parseInt(productWithoutPromotionValue[1]),
+                        0,
+                        "null"));
     }
 
     public List<String> readProductsFile() {
