@@ -98,7 +98,7 @@ public class PromotionService {
                                                Promotion promotion, Product promotionProduct) {  // 프로모션 상품 영수증 업데이트
         productRepository.decreasePromotionQuantity(product.name(), product.quantity());
         int promotionCount = product.quantity() / (promotion.buy() + promotion.get());
-        int purchaseCount = product.quantity() % (promotion.buy() + promotion.get());
+
         receipt.updatePurchaseProduct(promotionProduct, product.quantity(),
                 product.quantity() * promotionProduct.price());
         receipt.updatePresentProducts(promotionProduct, promotionCount * promotion.get());
