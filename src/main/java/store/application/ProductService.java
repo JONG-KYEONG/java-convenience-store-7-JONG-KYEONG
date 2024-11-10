@@ -1,13 +1,10 @@
 package store.application;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import store.domain.Product;
-import store.domain.Promotion;
 import store.dto.Receipt;
 import store.repository.ProductRepository;
-import store.repository.PromotionRepository;
 
 public class ProductService {
     private final ProductRepository productRepository;
